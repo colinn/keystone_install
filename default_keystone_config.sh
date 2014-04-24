@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
-
-echo "Please Enter your Swift PROXY IP/Hostname:"
-read SWIFT_IP
+if [[ -z $1 ]]
+then
+    echo "Please Enter your Swift PROXY IP/Hostname:"
+    read SWIFT_IP
+else
+    SWIFT_IP = $1
+fi
 echo
 echo
 ###### Inject Sample Data ######

@@ -147,6 +147,15 @@ if [[ -z "$DISABLE_ENDPOINTS" ]]; then
         --internalurl "http://$CONTROLLER_INTERNAL_ADDRESS:\$(public_port)s/v2.0"
 fi
 
+#
+# default swift service / user
+#
+if [[ -n $1 ]];
+then
+    ./default_keystone_config.sh $1
+else
+    echo "To install a default swift service and user, run ./default_keystone_config.sh"
+fi
 
 echo "===========Keystone Middleware setting for this deployment============="
 
@@ -177,7 +186,6 @@ echo "Service Token: $SERVICE_TOKEN"
 echo "Service Endpoint: $SERVICE_ENDPOINT"
 echo ""
 echo ""
-echo "To install a default swift service and user, run ./default_keystone_config.sh
 echo "=====Done====="
 
 
