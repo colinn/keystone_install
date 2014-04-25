@@ -172,6 +172,8 @@ echo ""
 echo "========== Service Information ========="
 echo "Service Token: $SERVICE_TOKEN"
 echo "Service Endpoint: $SERVICE_ENDPOINT"
+$TENANT_TOKEN=`./tenant_token`
+echo "Tenant Token: $TENANT_TOKEN"
 echo ""
 echo ""
 echo "=====Done====="
