@@ -145,24 +145,7 @@ else
     echo "To install a default swift service and user, run ./default_keystone_config.sh"
 fi
 
-echo "===========Keystone Middleware setting for this deployment============="
-
-echo "[ Keystone Auth ]"
-echo "operator_roles : admin, swiftoperator, _member_"
-echo "reseller_prefix : KEY_"
-echo "reseller_admin_role : ResellerAdmin"
-echo
-echo "[Keystone Auth Token Support]"
-echo "auth_admin_prefix : (leave blank)"
-echo "auth_host : \$IP_OF_KEYSTONE_HOST"
-echo "auth_port : $CONFIG_ADMIN_PORT"
-echo "auth_protocol : http"
-echo "auth_uri : http://\$KEYSTONE_IP:$CONFIG_PUBLIC_PORT/"
-echo "admin_user : swift"
-echo "admin_password : password"
-echo "admin_tenant_name : service"
-echo "signing_dir : /var/cache/swift"
-echo "include_service_catalog : False"
+./keystone_middleware_settings
 
 echo "========== DB information =========="
 echo "user : root"
