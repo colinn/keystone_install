@@ -15,6 +15,8 @@ CONTROLLER_ADMIN_ADDRESS=${CONTROLLER_ADMIN_ADDRESS:-localhost}
 CONTROLLER_INTERNAL_ADDRESS=${CONTROLLER_INTERNAL_ADDRESS:-localhost}
 export SERVICE_TOKEN=`./config_service_token`
 export SERVICE_ENDPOINT=`./service_endpoint`
+CONFIG_ADMIN_PORT=`./config_admin_port`
+CONFIG_PUBLIC_PORT=`./config_public_port`
 
 #
 # Swift service

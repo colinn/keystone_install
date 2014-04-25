@@ -80,7 +80,8 @@ CONTROLLER_INTERNAL_ADDRESS=${CONTROLLER_INTERNAL_ADDRESS:-localhost}
 
 #TOOLS_DIR=$(cd $(dirname "$0") && pwd)
 export SERVICE_TOKEN=`./config_service_token`
-./config_admin_port
+CONFIG_ADMIN_PORT=`./config_admin_port`
+CONFIG_PUBLIC_PORT=`./config_public_port`
 export SERVICE_ENDPOINT=`./service_endpoint`
 
 function get_id () {
@@ -129,9 +130,9 @@ keystone service-create --name=keystone \
                         --description="Keystone Identity Service")
 if [[ -z "$DISABLE_ENDPOINTS" ]]; then
     keystone endpoint-create --region RegionOne --service-id $KEYSTONE_SERVICE \
-        --publicurl "http://$CONTROLLER_PUBLIC_ADDRESS:\$(public_port)s/v2.0" \
-        --adminurl "http://$CONTROLLER_ADMIN_ADDRESS:\$(admin_port)s/v2.0" \
-        --internalurl "http://$CONTROLLER_INTERNAL_ADDRESS:\$(public_port)s/v2.0"
+        --publicurl "http://$CONTROLLER_PUBLIC_ADDRESS:$CONFIG_PUBLIC_PORT/v2.0" \
+        --adminurl "http://$CONTROLLER_ADMIN_ADDRESS:$CONFIG_ADMIN_PORT/v2.0" \
+        --internalurl "http://$CONTROLLER_INTERNAL_ADDRESS:$CONFIG_PUBLIC_PORT/v2.0"
 fi
 
 #
@@ -154,9 +155,9 @@ echo
 echo "[Keystone Auth Token Support]"
 echo "auth_admin_prefix : (leave blank)"
 echo "auth_host : \$IP_OF_KEYSTONE_HOST"
-echo "auth_port : 35357"
+echo "auth_port : $CONFIG_ADMIN_PORT"
 echo "auth_protocol : http"
-echo "auth_uri : http://\$KEYSTONE_IP:5000/"
+echo "auth_uri : http://\$KEYSTONE_IP:$CONFIG_PUBLIC_PORT/"
 echo "admin_user : swift"
 echo "admin_password : password"
 echo "admin_tenant_name : service"
