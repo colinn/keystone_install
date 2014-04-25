@@ -79,22 +79,9 @@ CONTROLLER_ADMIN_ADDRESS=${CONTROLLER_ADMIN_ADDRESS:-localhost}
 CONTROLLER_INTERNAL_ADDRESS=${CONTROLLER_INTERNAL_ADDRESS:-localhost}
 
 #TOOLS_DIR=$(cd $(dirname "$0") && pwd)
-KEYSTONE_CONF=${KEYSTONE_CONF:-/etc/keystone/keystone.conf}
-
-# Extract some info from Keystone's configuration file
-if [[ -r "$KEYSTONE_CONF" ]]; then
-    CONFIG_SERVICE_TOKEN=$(sed 's/[[:space:]]//g' $KEYSTONE_CONF | grep admin_token= | cut -d'=' -f2)
-    CONFIG_ADMIN_PORT=$(sed 's/[[:space:]]//g' $KEYSTONE_CONF | grep admin_port= | cut -d'=' -f2)
-fi
-
-export SERVICE_TOKEN=${SERVICE_TOKEN:-$CONFIG_SERVICE_TOKEN}
-if [[ -z "$SERVICE_TOKEN" ]]; then
-    echo "No service token found."
-    echo "Set SERVICE_TOKEN manually from keystone.conf admin_token."
-    exit 1
-fi
-
-export SERVICE_ENDPOINT=http://localhost:35357/v2.0
+export SERVICE_TOKEN=`./config_service_token`
+./config_admin_port
+export SERVICE_ENDPOINT=`./service_endpoint`
 
 function get_id () {
     echo `"$@" | grep ' id ' | awk '{print $4}'`

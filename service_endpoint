@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+echo http://localhost:35357/v2.0
