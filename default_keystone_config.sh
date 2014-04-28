@@ -10,7 +10,7 @@ then
     echo "Please Enter your Swift PROXY IP/Hostname:"
     read SWIFT_IP
 else
-    SWIFT_IP = $1
+    SWIFT_IP=$1
 fi
 echo
 echo
