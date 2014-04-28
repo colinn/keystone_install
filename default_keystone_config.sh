@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-if [[ -z $1 ]]
+
+function get_id () {
+    echo `"$@" | grep ' id ' | awk '{print $4}'`
+}
+
+if [[ -z $1 ]];
 then
     echo "Please Enter your Swift PROXY IP/Hostname:"
     read SWIFT_IP
