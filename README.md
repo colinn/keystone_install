@@ -1,10 +1,9 @@
 Keystone Quick Install & Setup
 ===============================
 
-Please run as root
+##Please run as root
 
-Deploy Keystone with default data
-=====
+#### Deploy Keystone with default data
 
     # Install git (if necessary)
     apt-get install -y git
@@ -14,8 +13,7 @@ Deploy Keystone with default data
         ./install_keystone.sh $Your_Swift_API_IP
 
 
-Deploy Keystone without default data
-=====
+#### Deploy Keystone without default data
 
     # Install git (if necessary)
     apt-get install -y git
@@ -25,7 +23,7 @@ Deploy Keystone without default data
 	./install_keystone.sh
 
 
-#You can also pupolate DB with default data by:  
+#### You can also pupolate DB with default data by:  
     ./default_keystone_config.sh
 
 
