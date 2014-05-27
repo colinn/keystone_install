@@ -1,10 +1,7 @@
 #!/usr/bin/env bash 
 
+set -e
 
-echo "Please Enter your Swift PROXY IP/Hostname:"
-read SWIFT_IP
-echo 
-echo 
 ORIGINAL_DIR=$(pwd)
 
 #FIX me
@@ -83,22 +80,10 @@ CONTROLLER_ADMIN_ADDRESS=${CONTROLLER_ADMIN_ADDRESS:-localhost}
 CONTROLLER_INTERNAL_ADDRESS=${CONTROLLER_INTERNAL_ADDRESS:-localhost}
 
 #TOOLS_DIR=$(cd $(dirname "$0") && pwd)
-KEYSTONE_CONF=${KEYSTONE_CONF:-/etc/keystone/keystone.conf}
-
-# Extract some info from Keystone's configuration file
-if [[ -r "$KEYSTONE_CONF" ]]; then
-    CONFIG_SERVICE_TOKEN=$(sed 's/[[:space:]]//g' $KEYSTONE_CONF | grep admin_token= | cut -d'=' -f2)
-    CONFIG_ADMIN_PORT=$(sed 's/[[:space:]]//g' $KEYSTONE_CONF | grep admin_port= | cut -d'=' -f2)
-fi
-
-export SERVICE_TOKEN=${SERVICE_TOKEN:-$CONFIG_SERVICE_TOKEN}
-if [[ -z "$SERVICE_TOKEN" ]]; then
-    echo "No service token found."
-    echo "Set SERVICE_TOKEN manually from keystone.conf admin_token."
-    exit 1
-fi
-
-export SERVICE_ENDPOINT=http://localhost:35357/v2.0
+export SERVICE_TOKEN=`./config_service_token`
+CONFIG_ADMIN_PORT=`./config_admin_port`
+CONFIG_PUBLIC_PORT=`./config_public_port`
+export SERVICE_ENDPOINT=`./service_endpoint`
 
 function get_id () {
     echo `"$@" | grep ' id ' | awk '{print $4}'`
@@ -107,8 +92,6 @@ function get_id () {
 
 
 echo "===================================ENV VAR============================"
-echo $SERVICE_TOKEN
-echo $SERVICE_ENDPOINT
 #
 # Default tenant
 #
@@ -148,70 +131,34 @@ keystone service-create --name=keystone \
                         --description="Keystone Identity Service")
 if [[ -z "$DISABLE_ENDPOINTS" ]]; then
     keystone endpoint-create --region RegionOne --service-id $KEYSTONE_SERVICE \
-        --publicurl "http://$CONTROLLER_PUBLIC_ADDRESS:\$(public_port)s/v2.0" \
-        --adminurl "http://$CONTROLLER_ADMIN_ADDRESS:\$(admin_port)s/v2.0" \
-        --internalurl "http://$CONTROLLER_INTERNAL_ADDRESS:\$(public_port)s/v2.0"
+        --publicurl "http://$CONTROLLER_PUBLIC_ADDRESS:$CONFIG_PUBLIC_PORT/v2.0" \
+        --adminurl "http://$CONTROLLER_ADMIN_ADDRESS:$CONFIG_ADMIN_PORT/v2.0" \
+        --internalurl "http://$CONTROLLER_INTERNAL_ADDRESS:$CONFIG_PUBLIC_PORT/v2.0"
 fi
 
-
 #
-# Swift service
+# default swift service / user
 #
-SWIFT_SERVICE=$(get_id \
-keystone service-create --name=swift \
-                        --type="object-store" \
-                        --description="Swift Service")
-if [[ -z "$DISABLE_ENDPOINTS" ]]; then
-    keystone endpoint-create --region RegionOne --service-id $SWIFT_SERVICE \
-        --publicurl   "http://$SWIFT_IP/v1/KEY_\$(tenant_id)s" \
-        --adminurl    "http://$CONTROLLER_ADMIN_ADDRESS/v1" \
-        --internalurl "http://$CONTROLLER_INTERNAL_ADDRESS/v1/KEY_\$(tenant_id)s"
+if [[ -n $1 ]];
+then
+    ./default_keystone_config.sh $1
+else
+    echo "To install a default swift service and user, run ./default_keystone_config.sh"
 fi
 
-echo "==================Smaple data Inject Finished=========================="
-echo
-sleep 2
-echo
-echo "==================Create User/Password/Tenant : swiftstack/password/SS===================="
-
-SS_TENANT=$(get_id \
-keystone tenant-create --name SS --enabled true --description "SwiftStack-DEV Tenant")
-keystone user-create --name swiftstack --pass password --tenant-id $SS_TENANT --email support@swiftstack.com --enabled true
-
-echo
-echo "================= Test v2.0 API to get TOKEN/Service Catalog of user swiftstack =================="
-sleep 2
-
-curl -d '{"auth":{"passwordCredentials":{"username": "swiftstack", "password": "password"},"tenantName":"SS"}}' -H "Content-type: application/json" http://localhost:5000/v2.0/tokens | python -mjson.tool
-
-sleep 2
-echo
-echo "================== Test Keystone V3 API to get TOKEN/Service Catalog of user swiftstack ====================="
-
-curl -d '{"auth":{"identity":{"methods":["password"],"password":{"user":{"domain":{"name":"default"},"name":"swiftstack","password":"password"}}},"scope":{"project":{"domain":{"name":"default"},"name":"SS"}}}}' -H "Content-type: application/json" http://localhost:5000/v3/auth/tokens | python -mjson.tool
-
-echo "===========Keystone Middleware setting for this deployment============="
-
-echo "[ Keystone Auth ]"
-echo "operator_roles : admin, swiftoperator, _member_"
-echo "reseller_prefix : KEY_"
-echo "reseller_admin_role : ResellerAdmin"
-echo
-echo "[Keystone Auth Token Support]"
-echo "auth_admin_prefix : (leave blank)"
-echo "auth_host : \$IP_OF_KEYSTONE_HOST"
-echo "auth_port : 35357"
-echo "auth_protocol : http"
-echo "auth_uri : http://\$KEYSTONE_IP:5000/"
-echo "admin_user : swift"
-echo "admin_password : password"
-echo "admin_tenant_name : service"
-echo "signing_dir : /var/cache/swift"
-echo "include_service_catalog : False"
+./keystone_middleware_settings
 
 echo "========== DB information =========="
 echo "user : root"
 echo "password : swiftstack"
+echo ""
+echo ""
+echo "========== Service Information ========="
+echo "Service Token: $SERVICE_TOKEN"
+echo "Service Endpoint: $SERVICE_ENDPOINT"
+TENANT_TOKEN=`./tenant_token`
+echo "Tenant Token: $TENANT_TOKEN"
+echo ""
 echo ""
 echo "=====Done====="
 
