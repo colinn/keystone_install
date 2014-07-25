@@ -13,6 +13,7 @@ apt-get update ; apt-get -y install git python-pip
 pip install --upgrade pip
 hash -r
 pip install --upgrade pbr
+pip install python-keystoneclient==0.9.0
 
 #For compiling dependencies of several pip libraries , you need to install following packages first
 apt-get install -y gcc python-dev libxml2-dev libxslt-dev
