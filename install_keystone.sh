@@ -20,7 +20,7 @@ apt-get install -y gcc python-dev libxml2-dev libxslt-dev
 
 #Clone the Keystone Source code from GitHub and check the stable/grizzly version
 cd /opt ; git clone https://github.com/openstack/keystone.git ; cd /opt/keystone
-git checkout stable/havana
+git checkout -b swiftstack-test 8d008af4d611376659ddad9cdce56bd2f1396c41
 
 # Install packages from local cache
 pip install -r /opt/keystone/requirements.txt
