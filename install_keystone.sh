@@ -48,7 +48,8 @@ sudo service mysql restart
 #Configuration Section
 
 sed -e 's/# connection = sqlite:\/\/\/keystone.db/connection = mysql:\/\/keystone:swiftstack@localhost\/keystone/' -i /etc/keystone/keystone.conf
-sed 's/#token_format =/token_format = UUID/' -i /etc/keystone/keystone.conf
+sed -e 's/# driver = keystone.token.backends.sql.Token/driver = keystone.token.backends.sql.Token/g' -i keystone.conf
+sed -e 's/# provider =/provider = keystone.token.providers.uuid.Provider/g' -i keystone.conf
 sed 's/ec2_extension user_crud_extension/ec2_extension s3_extension user_crud_extension/' -i /etc/keystone/keystone-paste.ini
 
 #enable logs
