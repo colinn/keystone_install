@@ -63,10 +63,10 @@ useradd keystone
 #Create log folder
 mkdir /var/log/keystone  
 sleep 2 
-chown -R keystone:keystone /var/log/keystone
 
 #Populate Data into keystone DB
 keystone-manage db_sync
+chown -R keystone:keystone /var/log/keystone
 
 sleep 1
 # Copy upstart and service start script 
