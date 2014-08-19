@@ -20,7 +20,7 @@ apt-get install -y gcc python-dev libxml2-dev libxslt-dev
 
 #Clone the Keystone Source code from GitHub and check the stable/grizzly version
 cd /opt ; git clone https://github.com/openstack/keystone.git ; cd /opt/keystone
-git checkout stable/havana
+git checkout -b swiftstack-test 8d008af4d611376659ddad9cdce56bd2f1396c41
 
 # Install packages from local cache
 pip install -r /opt/keystone/requirements.txt
@@ -48,9 +48,15 @@ sudo service mysql restart
 #Configuration Section
 
 sed -e 's/# connection = sqlite:\/\/\/keystone.db/connection = mysql:\/\/keystone:swiftstack@localhost\/keystone/' -i /etc/keystone/keystone.conf
-sed 's/#token_format =/token_format = UUID/' -i /etc/keystone/keystone.conf
+sed -e 's/# driver = keystone.token.backends.sql.Token/driver = keystone.token.backends.sql.Token/g' -i keystone.conf
+sed -e 's/# provider =/provider = keystone.token.providers.uuid.Provider/g' -i keystone.conf
 sed 's/ec2_extension user_crud_extension/ec2_extension s3_extension user_crud_extension/' -i /etc/keystone/keystone-paste.ini
 
+#enable logs
+sed -e 's/# debug = False/debug = True/g' -i keystone.conf
+sed -e 's/# verbose = False/verbose = True/g' -i keystone.conf
+sed -e 's/# log_file = keystone.log/log_file = keystone.log/g' -i keystone.conf
+sed -e 's/# log_dir = \/var\/log\/keystone/log_dir = \/var\/log\/keystone/g' -i keystone.conf
 
 #Add keystone user
 useradd keystone
@@ -58,10 +64,10 @@ useradd keystone
 #Create log folder
 mkdir /var/log/keystone  
 sleep 2 
-chown -R keystone:keystone /var/log/keystone
 
 #Populate Data into keystone DB
 keystone-manage db_sync
+chown -R keystone:keystone /var/log/keystone
 
 sleep 1
 # Copy upstart and service start script 
