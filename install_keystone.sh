@@ -15,6 +15,9 @@ hash -r
 pip install --upgrade pbr
 pip install python-keystoneclient==0.9.0
 
+#To pin the version to 0.9.1. Due to 0.9.2 has bug.
+pip install sqlalchemy-migrate==0.9.1
+
 #For compiling dependencies of several pip libraries , you need to install following packages first
 apt-get install -y gcc python-dev libxml2-dev libxslt-dev
 
