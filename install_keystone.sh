@@ -19,7 +19,7 @@ pip install python-keystoneclient==0.9.0
 pip install sqlalchemy-migrate==0.9.1
 
 # pin the paste version
-pip install paste=1.7.5.1
+pip install paste==1.7.5.1
 
 #For compiling dependencies of several pip libraries , you need to install following packages first
 apt-get install -y gcc python-dev libxml2-dev libxslt-dev
