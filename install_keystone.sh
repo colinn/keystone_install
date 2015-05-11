@@ -56,18 +56,19 @@ sed -e 's/# log_dir = \/var\/log\/keystone/log_dir = \/var\/log\/keystone/g' -i 
 sleep 2 
 
 #Populate Data into keystone DB
+service keystone restart
+sleep 3
 keystone-manage db_sync
 #chown -R keystone:keystone /var/log/keystone
 
-sleep 1
 # Copy upstart and service start script 
 ################## UPSTART ######################
 
 #cd $ORIGINAL_DIR ; cp keystone-init.d /etc/init.d/keystone ; cp keystone.conf-init /etc/init/keystone.conf
 
-service keystone start 
-sleep 3
-service keystone status
+ 
+sleep 1
+#service keystone status
 
 ################################################
 
