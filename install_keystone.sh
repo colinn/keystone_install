@@ -7,38 +7,19 @@ ORIGINAL_DIR=$(pwd)
 #FIX me
 #PASSWORD=password
 
-apt-get update ; apt-get -y install git python-pip
+apt-get update
+sudo add-apt-repository -y cloud-archive:kilo
+apt-get update 
 
-# Upgrade pip itself
-pip install --upgrade pip
-hash -r
-pip install --upgrade pbr
-pip install python-keystoneclient==0.9.0
-
-#To pin the version to 0.9.1. Due to 0.9.2 has bug.
-pip install sqlalchemy-migrate==0.9.1
-
-# pin the paste version
-pip install paste==1.7.5.1
-
-#For compiling dependencies of several pip libraries , you need to install following packages first
-apt-get install -y gcc python-dev libxml2-dev libxslt-dev
-
-#Clone the Keystone Source code from GitHub and check the stable/grizzly version
-cd /opt ; git clone https://github.com/openstack/keystone.git ; cd /opt/keystone
-git checkout -b swiftstack-test 8d008af4d611376659ddad9cdce56bd2f1396c41
-
-# Install packages from local cache
-pip install -r /opt/keystone/requirements.txt
 
 echo "=================================Starting to install KEYSTONE==========================================="
 echo
 echo
-cd /opt/keystone ; python setup.py install
+
 
 # Create Keystone configurartion Folder
-mkdir -p /etc/keystone ; cd /etc/keystone ; cp /opt/keystone/etc/* /etc/keystone/
-rename 's/\.sample//' /etc/keystone/*.sample
+#mkdir -p /etc/keystone ; cd /etc/keystone ; cp /opt/keystone/etc/* /etc/keystone/
+#rename 's/\.sample//' /etc/keystone/*.sample
 
 
 #Prepare MySQL 
@@ -65,21 +46,21 @@ sed -e 's/# log_file = keystone.log/log_file = keystone.log/g' -i keystone.conf
 sed -e 's/# log_dir = \/var\/log\/keystone/log_dir = \/var\/log\/keystone/g' -i keystone.conf
 
 #Add keystone user
-useradd keystone
+#useradd keystone
 
 #Create log folder
-mkdir /var/log/keystone  
+#mkdir /var/log/keystone  
 sleep 2 
 
 #Populate Data into keystone DB
 keystone-manage db_sync
-chown -R keystone:keystone /var/log/keystone
+#chown -R keystone:keystone /var/log/keystone
 
 sleep 1
 # Copy upstart and service start script 
 ################## UPSTART ######################
 
-cd $ORIGINAL_DIR ; cp keystone-init.d /etc/init.d/keystone ; cp keystone.conf-init /etc/init/keystone.conf
+#cd $ORIGINAL_DIR ; cp keystone-init.d /etc/init.d/keystone ; cp keystone.conf-init /etc/init/keystone.conf
 
 service keystone start 
 sleep 3
@@ -174,8 +155,3 @@ echo "Tenant Token: $TENANT_TOKEN"
 echo ""
 echo ""
 echo "=====Done====="
-
-
-
-
-
