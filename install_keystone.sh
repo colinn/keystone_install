@@ -17,9 +17,12 @@ echo
 echo
 
 
+
 # Create Keystone configurartion Folder
 #mkdir -p /etc/keystone ; cd /etc/keystone ; cp /opt/keystone/etc/* /etc/keystone/
 #rename 's/\.sample//' /etc/keystone/*.sample
+apt-get install -y keystone
+
 
 
 #Prepare MySQL 
