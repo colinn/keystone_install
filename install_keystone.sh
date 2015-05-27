@@ -22,7 +22,7 @@ pip install sqlalchemy-migrate==0.9.1
 pip install paste==1.7.5.1
 
 #For compiling dependencies of several pip libraries , you need to install following packages first
-apt-get install -y gcc python-dev libxml2-dev libxslt-dev
+apt-get install -y gcc python-dev libxml2-dev libxslt-dev zlib1g-dev
 
 #Clone the Keystone Source code from GitHub and check the stable/grizzly version
 cd /opt ; git clone https://github.com/openstack/keystone.git ; cd /opt/keystone
